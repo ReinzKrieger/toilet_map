@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "118579274919",
+    "project_id": "toiletmap-16935",
+    "storage_bucket": "toiletmap-16935.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:118579274919:android:94be2575b93670ceb42782",
+        "android_client_info": {
+          "package_name": "com.toiletmap.toiletmap"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDubSNDsKUhGa78Ix-CpbOAf45aegmH9oE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
