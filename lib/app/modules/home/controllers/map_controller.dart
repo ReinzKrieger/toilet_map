@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:toiletmap/app/modules/home/models/map_model.dart';
 
 class MapController extends GetxController {
   var selectedIndex = 0.obs; // Untuk BottomNavigationBar
   var selectedMapType = 0.obs; // Untuk peta (Global, Friends, Individual)
+  var mapMarkers = <MapModel>[].obs;
 
   // Contoh data toilet untuk setiap jenis peta
   var globalToilets = [
@@ -27,6 +30,12 @@ class MapController extends GetxController {
     update();
   }
 
+  @override
+  void onInit() {
+    super.onInit();
+    fetchMarkers();
+  }
+
   // Fungsi untuk membangun peta dan menampilkan toilet markers berdasarkan jenis peta
   Widget buildMap() {
     List<Map<String, double>> toilets = [];
@@ -41,14 +50,17 @@ class MapController extends GetxController {
     }
 
     return Container(
-      color: Colors.greenAccent, // Ganti dengan widget peta sebenarnya (misal: Google Maps)
+      color: Colors
+          .greenAccent, // Ganti dengan widget peta sebenarnya (misal: Google Maps)
       child: Column(
         children: [
-          Text('Showing ${selectedMapType.value == 0 ? "Global" : selectedMapType.value == 1 ? "Friends" : "Individual"} Map'),
+          Text(
+              'Showing ${selectedMapType.value == 0 ? "Global" : selectedMapType.value == 1 ? "Friends" : "Individual"} Map'),
           // Daftar marker untuk toilet
           ...toilets.map((toilet) => ListTile(
-            title: Text('Toilet at ${toilet['latitude']}, ${toilet['longitude']}'),
-          )),
+                title: Text(
+                    'Toilet at ${toilet['latitude']}, ${toilet['longitude']}'),
+              )),
         ],
       ),
     );
@@ -79,5 +91,17 @@ class MapController extends GetxController {
   void findCurrentLocation() {
     Get.snackbar('Location', 'Finding current location...');
     // Tambahkan logika untuk mengambil lokasi pengguna
+  }
+
+  void fetchMarkers() async {
+    FirebaseFirestore.instance
+        .collection('LocationMark')
+        .snapshots()
+        .listen((snapshot) {
+      mapMarkers.value = snapshot.docs.map((doc) {
+        return MapModel.fromMap(doc.id, doc.data());
+      }).toList();
+      print(mapMarkers.value);
+    });
   }
 }
