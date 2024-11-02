@@ -21,7 +21,7 @@ class AuthController extends GetxController {
     try {
       UserCredential userCredential =
           await auth.signInWithEmailAndPassword(email: users, password: pass);
-      Get.offNamed(Routes.profile);
+      Get.offNamed(Routes.map);
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
           "Login Gagal", "User Tidak Ditemukan \n atau Password Salah");
@@ -36,6 +36,34 @@ class AuthController extends GetxController {
   void logout() async {
     await auth.signOut();
     Get.offAllNamed(Routes.home);
+  }
+
+  Future<void> signUp(
+      String email, String password, String repeatPass, String username) async {
+    if (password != repeatPass) {
+      Get.snackbar("Oops", "Password Tidak Sesuai");
+      return;
+    }
+
+    try {
+      // Create user with email and password
+      UserCredential userCredential = await auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Save additional user data to Firestore
+      await firebaseFirestore
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({
+        'name': username,
+        'email': email,
+      });
+      Get.offAllNamed(Routes.profile);
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+    }
   }
 
   Future<void> requestLocation() async {
