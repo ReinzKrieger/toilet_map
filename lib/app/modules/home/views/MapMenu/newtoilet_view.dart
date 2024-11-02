@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:toiletmap/app/modules/home/controllers/newtoilet_controller.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:toiletmap/app/modules/home/views/custom_bottom_nav.dart';
 //import 'notifications_view.dart';
 
 class NewToiletView extends StatelessWidget {
+  final NewToiletController controller = Get.put(NewToiletController());
   @override
   Widget build(BuildContext context) {
-    final NewToiletController controller = Get.put(NewToiletController());
-    final RxInt selectedIndex = 0.obs; // Untuk navigasi BottomNavigationBar
-
     return Scaffold(
       backgroundColor: Color(0xFF181C14),
       appBar: AppBar(
@@ -41,7 +40,27 @@ class NewToiletView extends StatelessWidget {
               Container(
                 height: 200,
                 color: Colors.grey,
-                child: Center(child: Text('Map Placeholder with Toilet Marker')),
+                child: Obx(() {
+                  if (controller.isLoading.value) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  return GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                        target: LatLng(controller.currentLat.value,
+                            controller.currentLng.value), // Lokasi awal
+                        zoom: 15),
+                    markers: controller.mapMarker.value != null
+                        ? {controller.mapMarker.value!}
+                        : {},
+                    onTap: (LatLng position) {
+                      controller.setMapMarker(position);
+                    },
+                    myLocationEnabled: true,
+                    myLocationButtonEnabled: true,
+                    scrollGesturesEnabled: true, // Pastikan ini diaktifkan
+                    onMapCreated: (controller) {},
+                  );
+                }),
               ),
               SizedBox(height: 16),
 
@@ -57,7 +76,7 @@ class NewToiletView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Obx(
-                        () => Text(
+                    () => Text(
                       controller.selectedDateTime.value,
                       style: TextStyle(color: Colors.white),
                     ),
@@ -69,16 +88,19 @@ class NewToiletView extends StatelessWidget {
               // Tag Location
               Text('Tag Location', style: TextStyle(color: Colors.white)),
               SizedBox(height: 8),
-              TextField(
-                controller: controller.tagLocationController,
-                style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: 'Tag Location',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  filled: true,
-                  fillColor: Colors.grey[800],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+              Obx(
+                () => TextField(
+                  controller: TextEditingController(
+                      text: "${controller.latitude}, ${controller.longitude}"),
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: 'Tag Location',
+                    hintStyle: TextStyle(color: Colors.grey),
+                    filled: true,
+                    fillColor: Colors.grey[800],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                 ),
               ),
@@ -112,7 +134,8 @@ class NewToiletView extends StatelessWidget {
                 direction: Axis.horizontal,
                 allowHalfRating: true,
                 itemCount: 5,
-                itemBuilder: (context, _) => Icon(Icons.star, color: Colors.yellow),
+                itemBuilder: (context, _) =>
+                    Icon(Icons.star, color: Colors.yellow),
                 onRatingUpdate: (rating) {
                   controller.rating.value = rating;
                 },
@@ -137,11 +160,11 @@ class NewToiletView extends StatelessWidget {
                     },
                   ),
                   Obx(() => Text(
-                    controller.selectedPhotoPath.value.isEmpty
-                        ? 'No photo selected'
-                        : controller.selectedPhotoPath.value,
-                    style: TextStyle(color: Colors.white),
-                  )),
+                        controller.selectedPhotoPath.value.isEmpty
+                            ? 'No photo selected'
+                            : controller.selectedPhotoPath.value,
+                        style: TextStyle(color: Colors.white),
+                      )),
                 ],
               ),
             ],

@@ -13,6 +13,7 @@ class LoginView extends StatelessWidget {
   LoginView({super.key});
   @override
   Widget build(BuildContext context) {
+    authLogin.requestLocation();
     return Scaffold(
       backgroundColor: Color(0xFF181C14), // Adjust background color if needed
       body: Padding(

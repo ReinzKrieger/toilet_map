@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:toiletmap/app/routes/app_pages.dart';
 
 class AuthController extends GetxController {
@@ -35,5 +36,12 @@ class AuthController extends GetxController {
   void logout() async {
     await auth.signOut();
     Get.offAllNamed(Routes.home);
+  }
+
+  Future<void> requestLocation() async {
+    var status = await Permission.location.status;
+    if (!status.isGranted) {
+      status = await Permission.location.request();
+    }
   }
 }

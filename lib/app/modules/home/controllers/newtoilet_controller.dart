@@ -1,14 +1,33 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:location/location.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class NewToiletController extends GetxController {
   var selectedDateTime = '9/28/2024 8:24 AM'.obs;
   var rating = 0.0.obs;
   var selectedPhotoPath = ''.obs;
+  var latitude = ''.obs;
+  var longitude = ''.obs;
+  var mapMarker = Rxn<Marker>();
+
+  var currentLat = 0.0.obs;
+  var currentLng = 0.0.obs;
+
+  final Location location = Location();
+  final isLoading = true.obs;
 
   TextEditingController tagLocationController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+
+  @override
+  void onInit() {
+    super.onInit();
+    _initGeolocator();
+  }
 
   // Fungsi untuk mengambil tanggal dan waktu
   void pickDateTime() async {
@@ -51,6 +70,86 @@ class NewToiletController extends GetxController {
 
     if (pickedFile != null) {
       selectedPhotoPath.value = pickedFile.path;
+    }
+  }
+
+  void setMapMarker(LatLng position) {
+    final marker = Marker(
+        markerId: MarkerId('single_mark'),
+        position: position,
+        icon: BitmapDescriptor.defaultMarker,
+        infoWindow: InfoWindow(
+          title: 'Pilih Disini',
+        ));
+    mapMarker.value = marker;
+    latitude.value = position.latitude.toString();
+    longitude.value = position.longitude.toString();
+  }
+
+  Future<void> _initGeolocator() async {
+    try {
+      // Inisialisasi dan cek location service
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        Get.snackbar(
+          'Error',
+          'Location services are disabled. Please enable location services',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
+      }
+
+      // Cek dan minta permission
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          Get.snackbar(
+            'Error',
+            'Location permissions are denied',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        Get.snackbar(
+          'Error',
+          'Location permissions are permanently denied, please enable in Settings',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
+      }
+
+      // Setelah semua pengecekan, ambil posisi
+      await getCurrentLocation();
+    } catch (e) {
+      print('Error initializing geolocator: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to initialize location services: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  Future<void> getCurrentLocation() async {
+    try {
+      // Get current position with new locationSettings parameter
+      Position position = await Geolocator.getCurrentPosition(
+        locationSettings: LocationSettings(
+          timeLimit: const Duration(seconds: 5),
+        ),
+      );
+
+      currentLat.value = position.latitude;
+      currentLng.value = position.longitude;
+      isLoading.value = false;
+    } catch (e) {
+      Get.snackbar('Error', e.toString());
+      print('Error $e');
+      isLoading.value = false;
     }
   }
 

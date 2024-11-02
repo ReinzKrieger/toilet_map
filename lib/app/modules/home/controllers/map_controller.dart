@@ -1,12 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:toiletmap/app/modules/home/models/map_model.dart';
 
 class MapController extends GetxController {
   var selectedIndex = 0.obs; // Untuk BottomNavigationBar
   var selectedMapType = 0.obs; // Untuk peta (Global, Friends, Individual)
   var mapMarkers = <MapModel>[].obs;
+
+  final Location location = Location();
 
   // Contoh data toilet untuk setiap jenis peta
   var globalToilets = [
@@ -101,7 +105,9 @@ class MapController extends GetxController {
       mapMarkers.value = snapshot.docs.map((doc) {
         return MapModel.fromMap(doc.id, doc.data());
       }).toList();
-      print(mapMarkers.value);
+      if (kDebugMode) {
+        print(mapMarkers.value);
+      }
     });
   }
 }
