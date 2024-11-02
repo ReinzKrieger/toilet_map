@@ -88,19 +88,17 @@ class NewToiletView extends StatelessWidget {
               // Tag Location
               Text('Tag Location', style: TextStyle(color: Colors.white)),
               SizedBox(height: 8),
-              Obx(
-                () => TextField(
-                  controller: TextEditingController(
-                      text: "${controller.latitude}, ${controller.longitude}"),
-                  style: TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    hintText: 'Tag Location',
-                    hintStyle: TextStyle(color: Colors.grey),
-                    filled: true,
-                    fillColor: Colors.grey[800],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+              TextField(
+                controller: controller.tagLocationController,
+                style: TextStyle(color: Colors.white),
+                readOnly: true,
+                decoration: InputDecoration(
+                  hintText: 'Tag Location',
+                  hintStyle: TextStyle(color: Colors.grey),
+                  filled: true,
+                  fillColor: Colors.grey[800],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
               ),
@@ -162,8 +160,10 @@ class NewToiletView extends StatelessWidget {
                   Obx(() => Text(
                         controller.selectedPhotoPath.value.isEmpty
                             ? 'No photo selected'
-                            : controller.selectedPhotoPath.value,
-                        style: TextStyle(color: Colors.white),
+                            : controller.selectedPhotoName.value,
+                        style: TextStyle(
+                            color: Colors.white,
+                            overflow: TextOverflow.ellipsis),
                       )),
                 ],
               ),

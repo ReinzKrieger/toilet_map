@@ -1,18 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 class NewToiletController extends GetxController {
+  FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   var selectedDateTime = '9/28/2024 8:24 AM'.obs;
   var rating = 0.0.obs;
   var selectedPhotoPath = ''.obs;
+  var selectedPhotoName = ''.obs;
   var latitude = ''.obs;
   var longitude = ''.obs;
   var mapMarker = Rxn<Marker>();
+  var selectedDate = Rxn<DateTime>();
 
   var currentLat = 0.0.obs;
   var currentLng = 0.0.obs;
@@ -47,6 +52,10 @@ class NewToiletController extends GetxController {
       if (pickedTime != null) {
         final dateTime = DateTime(pickedDate.year, pickedDate.month,
             pickedDate.day, pickedTime.hour, pickedTime.minute);
+
+        if (dateTime != "") {
+          selectedDate.value = dateTime;
+        }
         selectedDateTime.value =
             '${pickedDate.month}/${pickedDate.day}/${pickedDate.year} ${pickedTime.format(Get.context!)}';
       }
@@ -60,6 +69,7 @@ class NewToiletController extends GetxController {
 
     if (pickedFile != null) {
       selectedPhotoPath.value = pickedFile.path;
+      selectedPhotoName.value = pickedFile.name;
     }
   }
 
@@ -84,6 +94,7 @@ class NewToiletController extends GetxController {
     mapMarker.value = marker;
     latitude.value = position.latitude.toString();
     longitude.value = position.longitude.toString();
+    tagLocationController.text = "${latitude.value},${longitude.value}";
   }
 
   Future<void> _initGeolocator() async {
@@ -155,7 +166,23 @@ class NewToiletController extends GetxController {
 
   // Fungsi untuk menyimpan data toilet
   void saveToilet() {
-    // Implementasikan logika untuk menyimpan data
-    Get.snackbar('Save', 'Toilet saved successfully');
+    Map<String, dynamic> data = {
+      "datetime": Timestamp.fromDate(selectedDate.value!),
+      "latitude": latitude.value,
+      "longitude": longitude.value,
+      "title": "Toilet Umum",
+      "description": descriptionController.text,
+      "rating": rating.value,
+      "imageUrl": selectedPhotoPath.value
+    };
+    try {
+      print("id : ${auth.currentUser!.uid}");
+      final submit = firebaseFirestore
+          .collection('LocationMark')
+          .doc(auth.currentUser!.uid)
+          .set(data);
+    } catch (e) {
+      Get.snackbar("Oops", "message : $e");
+    }
   }
 }
