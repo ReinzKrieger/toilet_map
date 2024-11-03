@@ -21,7 +21,7 @@ class AuthController extends GetxController {
     try {
       UserCredential userCredential =
           await auth.signInWithEmailAndPassword(email: users, password: pass);
-      Get.offNamed(Routes.map);
+      Get.offNamed(Routes.profile);
     } on FirebaseAuthException catch (e) {
       Get.snackbar(
           "Login Gagal", "User Tidak Ditemukan \n atau Password Salah");

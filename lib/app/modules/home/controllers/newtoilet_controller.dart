@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
+import 'package:toiletmap/app/routes/app_pages.dart';
 
 class NewToiletController extends GetxController {
   FirebaseAuth auth = FirebaseAuth.instance;
@@ -14,8 +15,8 @@ class NewToiletController extends GetxController {
   var rating = 0.0.obs;
   var selectedPhotoPath = ''.obs;
   var selectedPhotoName = ''.obs;
-  var latitude = ''.obs;
-  var longitude = ''.obs;
+  var latitude = 0.0.obs;
+  var longitude = 0.0.obs;
   var mapMarker = Rxn<Marker>();
   var selectedDate = Rxn<DateTime>();
 
@@ -92,8 +93,8 @@ class NewToiletController extends GetxController {
           title: 'Pilih Disini',
         ));
     mapMarker.value = marker;
-    latitude.value = position.latitude.toString();
-    longitude.value = position.longitude.toString();
+    latitude.value = position.latitude;
+    longitude.value = position.longitude;
     tagLocationController.text = "${latitude.value},${longitude.value}";
   }
 
@@ -167,7 +168,7 @@ class NewToiletController extends GetxController {
   // Fungsi untuk menyimpan data toilet
   void saveToilet() {
     Map<String, dynamic> data = {
-      "datetime": Timestamp.fromDate(selectedDate.value!),
+      // "datetime": Timestamp.fromDate(selectedDate.value!),
       "latitude": latitude.value,
       "longitude": longitude.value,
       "title": "Toilet Umum",
@@ -177,10 +178,12 @@ class NewToiletController extends GetxController {
     };
     try {
       print("id : ${auth.currentUser!.uid}");
-      final submit = firebaseFirestore
+      firebaseFirestore
           .collection('LocationMark')
           .doc(auth.currentUser!.uid)
           .set(data);
+      // Get.snackbar("Success", "Map Marked Succesfully");
+      Get.offNamed(Routes.profile);
     } catch (e) {
       Get.snackbar("Oops", "message : $e");
     }
