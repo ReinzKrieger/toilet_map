@@ -167,25 +167,29 @@ class NewToiletController extends GetxController {
 
   // Fungsi untuk menyimpan data toilet
   void saveToilet() {
-    Map<String, dynamic> data = {
-      // "datetime": Timestamp.fromDate(selectedDate.value!),
-      "latitude": latitude.value,
-      "longitude": longitude.value,
-      "title": "Toilet Umum",
-      "description": descriptionController.text,
-      "rating": rating.value,
-      "imageUrl": selectedPhotoPath.value
-    };
-    try {
-      print("id : ${auth.currentUser!.uid}");
-      firebaseFirestore
-          .collection('LocationMark')
-          .doc(auth.currentUser!.uid)
-          .set(data);
-      // Get.snackbar("Success", "Map Marked Succesfully");
-      Get.offNamed(Routes.profile);
-    } catch (e) {
-      Get.snackbar("Oops", "message : $e");
-    }
+  Map<String, dynamic> data = {
+    "userId": auth.currentUser!.uid, // Add userId to associate the marker with the user
+    "latitude": latitude.value,
+    "longitude": longitude.value,
+    "title": "Toilet Umum",
+    "description": descriptionController.text,
+    "rating": rating.value,
+    "imageUrl": selectedPhotoPath.value,
+    // Add any other fields as needed
+  };
+
+  try {
+    print("User ID: ${auth.currentUser!.uid}");
+    firebaseFirestore
+        .collection('LocationMark')
+        .add(data) // Use add() to generate a unique document ID
+        .then((_) {
+          print("Map marked successfully");
+          Get.offNamed(Routes.profile);
+        });
+  } catch (e) {
+    Get.snackbar("Oops", "Message: $e");
   }
+}
+
 }
