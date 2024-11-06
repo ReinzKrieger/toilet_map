@@ -104,13 +104,14 @@ class FeedController extends GetxController {
 
   Future<Set<Marker>> getMarkbyUid(String id) async {
     String uid = id;
-
+    markers.clear();
     try {
       var markData =
           await firebaseFirestore.collection('LocationMark').doc(id).get();
 
       if (markData.exists) {
         var data = markData.data();
+        print(data);
         latitude.value = data?['latitude'];
         longitude.value = data?['longitude'];
 

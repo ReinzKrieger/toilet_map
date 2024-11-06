@@ -27,7 +27,6 @@ class ToiletDetailView extends StatelessWidget {
       {"user": "Bob", "comment": "Great location and accessible."},
       {"user": "Charlie", "comment": "Needs more facilities nearby."},
     ];
-    feedController.getMarkbyUid(id);
     return Scaffold(
       backgroundColor: Color(0xFF181C14),
       appBar: AppBar(
@@ -81,7 +80,7 @@ class ToiletDetailView extends StatelessWidget {
                     initialCameraPosition: CameraPosition(
                       target: LatLng(feedController.latitude.value,
                           feedController.longitude.value),
-                      zoom: 15,
+                      zoom: 5,
                     ),
                     markers: snapshot.data ?? {},
                     mapType: MapType.normal,
