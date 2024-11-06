@@ -6,24 +6,32 @@ import 'package:toiletmap/app/modules/home/controllers/feed_controller.dart';
 
 class ToiletDetailView extends StatelessWidget {
   FeedController feedController = Get.put(FeedController());
+
+  ToiletDetailView({super.key});
   @override
- @override
   Widget build(BuildContext context) {
     // Retrieve the user’s name and marker location data from arguments
     final String userName = Get.arguments['name'] ?? 'User';
-    final LatLng location = Get.arguments['location'] ?? LatLng(-6.992049, 110.417739);
+    print(userName);
+    final dynamic locationArg = Get.arguments['location'];
+    final LatLng defaultLocation = LatLng(-6.992049, 110.417739);
 
+    final LatLng location =
+        (locationArg != null && locationArg != "" && locationArg is LatLng)
+            ? locationArg
+            : defaultLocation;
     // Hardcoded comments for the demo
     final List<Map<String, String>> comments = [
       {"user": "Alice", "comment": "Clean and well-maintained."},
       {"user": "Bob", "comment": "Great location and accessible."},
       {"user": "Charlie", "comment": "Needs more facilities nearby."},
     ];
-
+    feedController.getMarkbyUid();
     return Scaffold(
       backgroundColor: Color(0xFF181C14),
       appBar: AppBar(
-        title: Text("$userName's Toilet", style: TextStyle(color: Colors.white)),
+        title:
+            Text("$userName's Toilet", style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
         elevation: 0,
         actions: [
@@ -50,22 +58,39 @@ class ToiletDetailView extends StatelessWidget {
               color: Colors.grey[800],
               border: Border.all(color: Colors.white, width: 2),
             ),
-            child: GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: location,
-                zoom: 15,
-              ),
-              markers: {
-                Marker(
-                  markerId: MarkerId('toiletLocation'),
-                  position: location,
-                  infoWindow: InfoWindow(title: "$userName's Toilet"),
-                ),
-              },
-            ),
+            child: FutureBuilder<Set<Marker>>(
+                future: feedController.getMarkbyUid(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(color: Colors.yellow),
+                    );
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Error loading markers: ${snapshot.error}',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    );
+                  }
+
+                  return GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                      target: location,
+                      zoom: 15,
+                    ),
+                    markers: snapshot.data ?? {},
+                    mapType: MapType.normal,
+                    myLocationEnabled: true,
+                    zoomControlsEnabled: true,
+                    zoomGesturesEnabled: true,
+                  );
+                }),
           ),
           SizedBox(height: 10),
-          
+
           // Hardcoded comments section
           Expanded(
             child: ListView.builder(
@@ -77,13 +102,15 @@ class ToiletDetailView extends StatelessWidget {
                     backgroundColor: Colors.grey[800],
                     child: Icon(Icons.person, color: Colors.white),
                   ),
-                  title: Text(comment['user']!, style: TextStyle(color: Colors.white)),
-                  subtitle: Text(comment['comment']!, style: TextStyle(color: Colors.grey)),
+                  title: Text(comment['user']!,
+                      style: TextStyle(color: Colors.white)),
+                  subtitle: Text(comment['comment']!,
+                      style: TextStyle(color: Colors.grey)),
                 );
               },
             ),
           ),
-          
+
           // Comment input field
           Padding(
             padding: const EdgeInsets.all(8.0),

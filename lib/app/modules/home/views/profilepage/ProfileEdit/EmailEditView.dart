@@ -25,7 +25,7 @@ class EmailEditView extends StatelessWidget {
           TextButton(
             onPressed: () {
               // Aksi ketika tombol Done ditekan
-              controller.saveProfile(); // Simpan profil
+              controller.saveProfile('email'); // Simpan profil
             },
             child: Text(
               'Done',
@@ -35,7 +35,8 @@ class EmailEditView extends StatelessWidget {
         ],
         backgroundColor: Colors.black, // Latar belakang hitam
       ),
-      body: SingleChildScrollView( // Menambahkan scroll untuk mencegah overflow
+      body: SingleChildScrollView(
+        // Menambahkan scroll untuk mencegah overflow
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,9 +76,9 @@ class EmailEditView extends StatelessWidget {
             Align(
               alignment: Alignment.bottomRight,
               child: Obx(() => Text(
-                '${controller.email.value.length}/50', // Menggunakan observable untuk menghitung karakter email
-                style: TextStyle(color: Colors.grey),
-              )),
+                    '${controller.email.value.length}/50', // Menggunakan observable untuk menghitung karakter email
+                    style: TextStyle(color: Colors.grey),
+                  )),
             ),
           ],
         ),

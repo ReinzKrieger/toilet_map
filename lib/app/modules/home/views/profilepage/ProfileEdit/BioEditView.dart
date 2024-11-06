@@ -9,7 +9,6 @@ class BioEditView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
@@ -24,6 +23,7 @@ class BioEditView extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () {
+              controller.saveProfile('bio');
               // Aksi ketika tombol Done ditekan
             },
             child: Text(
@@ -34,7 +34,8 @@ class BioEditView extends StatelessWidget {
         ],
         backgroundColor: Colors.black, // Latar belakang hitam
       ),
-      body: SingleChildScrollView( // Menambahkan scroll untuk mencegah overflow
+      body: SingleChildScrollView(
+        // Menambahkan scroll untuk mencegah overflow
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,15 +69,16 @@ class BioEditView extends StatelessWidget {
                 ),
               ),
               style: TextStyle(color: Colors.white), // Teks putih
-              maxLines: 3, // Lebih dari satu baris karena bio biasanya lebih panjang
+              maxLines:
+                  3, // Lebih dari satu baris karena bio biasanya lebih panjang
             ),
             SizedBox(height: 10),
             Align(
               alignment: Alignment.bottomRight,
               child: Obx(() => Text(
-                '${controller.bio.value.length}/100', // Menggunakan observable untuk menghitung karakter bio
-                style: TextStyle(color: Colors.grey),
-              )),
+                    '${controller.bio.value.length}/100', // Menggunakan observable untuk menghitung karakter bio
+                    style: TextStyle(color: Colors.grey),
+                  )),
             ),
           ],
         ),

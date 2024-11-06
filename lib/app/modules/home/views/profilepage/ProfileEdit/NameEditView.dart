@@ -23,7 +23,7 @@ class NameEditView extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () {
-              controller.saveProfile(); // Aksi ketika tombol Done ditekan
+              controller.saveProfile('name'); // Aksi ketika tombol Done ditekan
             },
             child: Text(
               'Done',
@@ -34,7 +34,8 @@ class NameEditView extends StatelessWidget {
         backgroundColor: Colors.black, // Latar belakang hitam di AppBar
         elevation: 0, // Hilangkan bayangan di AppBar agar lebih bersih
       ),
-      body: SingleChildScrollView( // Menambahkan scroll untuk mencegah overflow
+      body: SingleChildScrollView(
+        // Menambahkan scroll untuk mencegah overflow
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,7 +50,8 @@ class NameEditView extends StatelessWidget {
               maxLength: 50, // Maksimal 50 karakter
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.black54, // Warna background TextField abu-abu gelap
+                fillColor:
+                    Colors.black54, // Warna background TextField abu-abu gelap
                 hintText: 'Add your name',
                 hintStyle: TextStyle(color: Colors.white), // Placeholder kuning
                 border: OutlineInputBorder(
@@ -74,9 +76,9 @@ class NameEditView extends StatelessWidget {
             Align(
               alignment: Alignment.bottomRight,
               child: Obx(() => Text(
-                '${controller.name.value.length}/50', // Menampilkan hitungan karakter
-                style: TextStyle(color: Colors.grey),
-              )),
+                    '${controller.name.value.length}/50', // Menampilkan hitungan karakter
+                    style: TextStyle(color: Colors.grey),
+                  )),
             ),
           ],
         ),

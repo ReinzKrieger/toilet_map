@@ -24,6 +24,7 @@ class UsernameEditView extends StatelessWidget {
           TextButton(
             onPressed: () {
               // Aksi ketika tombol Done ditekan
+              controller.saveProfile('username');
             },
             child: Text(
               'Done',
@@ -33,7 +34,8 @@ class UsernameEditView extends StatelessWidget {
         ],
         backgroundColor: Colors.black, // Latar belakang hitam
       ),
-      body: SingleChildScrollView( // Menambahkan scroll untuk mencegah overflow
+      body: SingleChildScrollView(
+        // Menambahkan scroll untuk mencegah overflow
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -73,9 +75,9 @@ class UsernameEditView extends StatelessWidget {
             Align(
               alignment: Alignment.bottomRight,
               child: Obx(() => Text(
-                '${controller.username.value.length}/50', // Menggunakan observable untuk menghitung karakter
-                style: TextStyle(color: Colors.grey),
-              )),
+                    '${controller.username.value.length}/50', // Menggunakan observable untuk menghitung karakter
+                    style: TextStyle(color: Colors.grey),
+                  )),
             ),
           ],
         ),

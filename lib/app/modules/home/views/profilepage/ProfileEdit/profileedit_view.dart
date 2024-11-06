@@ -34,10 +34,11 @@ class ProfileEditView extends StatelessWidget {
               children: [
                 // Lingkaran untuk foto profil
                 Obx(
-                      () => CircleAvatar(
+                  () => CircleAvatar(
                     radius: 50,
                     backgroundImage: controller.profilePhoto.value.isNotEmpty
-                        ? FileImage(controller.getImageFile()) // Gambar dari galeri/kamera
+                        ? FileImage(controller
+                            .getImageFile()) // Gambar dari galeri/kamera
                         : null,
                     backgroundColor: Colors.grey,
                     child: controller.profilePhoto.value.isEmpty
@@ -63,39 +64,49 @@ class ProfileEditView extends StatelessWidget {
             ),
             SizedBox(height: 32),
             // Bagian untuk mengedit Name
-            _buildProfileOption(
-              "Name",
-              controller.name.value,
-                  () {
-                Get.to(() => NameEditView()); // Navigasi ke halaman edit name
-              },
+            Obx(
+              () => _buildProfileOption(
+                "Name",
+                controller.name.value,
+                () {
+                  Get.to(() => NameEditView()); // Navigasi ke halaman edit name
+                },
+              ),
             ),
             Divider(color: Colors.grey),
             // Bagian untuk mengedit Username
-            _buildProfileOption(
-              "Username",
-              controller.username.value,
-                  () {
-                Get.to(() => UsernameEditView()); // Navigasi ke halaman edit username
-              },
+            Obx(
+              () => _buildProfileOption(
+                "Username",
+                controller.username.value,
+                () {
+                  Get.to(() =>
+                      UsernameEditView()); // Navigasi ke halaman edit username
+                },
+              ),
             ),
             Divider(color: Colors.grey),
             // Bagian untuk mengedit Email
-            _buildProfileOption(
-              "Email",
-              controller.email.value,
-                  () {
-                Get.to(() => EmailEditView()); // Navigasi ke halaman edit email
-              },
+            Obx(
+              () => _buildProfileOption(
+                "Email",
+                controller.email.value,
+                () {
+                  Get.to(
+                      () => EmailEditView()); // Navigasi ke halaman edit email
+                },
+              ),
             ),
             Divider(color: Colors.grey),
             // Bagian untuk mengedit Bio
-            _buildProfileOption(
-              "Bio",
-              controller.bio.value,
-                  () {
-                Get.to(() => BioEditView()); // Navigasi ke halaman edit bio
-              },
+            Obx(
+              () => _buildProfileOption(
+                "Bio",
+                controller.bio.value,
+                () {
+                  Get.to(() => BioEditView()); // Navigasi ke halaman edit bio
+                },
+              ),
             ),
             Divider(color: Colors.grey),
           ],
