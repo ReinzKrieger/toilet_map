@@ -13,6 +13,7 @@ class ToiletDetailView extends StatelessWidget {
     // Retrieve the user’s name and marker location data from arguments
     final String userName = Get.arguments['name'] ?? 'User';
     var id = Get.arguments['id'] ?? 0;
+    print(id);
     final dynamic locationArg = Get.arguments['location'];
     final LatLng defaultLocation = LatLng(-6.992049, 110.417739);
 

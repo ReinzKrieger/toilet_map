@@ -52,7 +52,7 @@ class FeedView extends StatelessWidget {
                               // Navigate to ToiletDetailView with user name as argument
                               Get.to(() => ToiletDetailView(), arguments: {
                                 'name': userWithMarkers.user.name,
-                                'id': userWithMarkers.user.id
+                                'id': userWithMarkers.markers[index].id
                               });
                             },
                             leading: CircleAvatar(

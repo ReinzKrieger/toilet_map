@@ -106,21 +106,20 @@ class FeedController extends GetxController {
     String uid = id;
 
     try {
-      var markData = await firebaseFirestore
-          .collection('LocationMark')
-          .where('userId', isEqualTo: uid)
-          .get();
+      var markData =
+          await firebaseFirestore.collection('LocationMark').doc(id).get();
 
-      for (var docs in markData.docs) {
-        var data = docs.data();
-        latitude.value = data['latitude'];
-        longitude.value = data['longitude'];
-        if (data['latitude'] != null && data['longitude'] != null) {
+      if (markData.exists) {
+        var data = markData.data();
+        latitude.value = data?['latitude'];
+        longitude.value = data?['longitude'];
+
+        if (data?['latitude'] != null && data?['longitude'] != null) {
           markers.add(
             Marker(
-              markerId: MarkerId(docs.id),
+              markerId: MarkerId(id),
               position: LatLng(
-                double.parse(data['latitude'].toString()),
+                double.parse(data!['latitude'].toString()),
                 double.parse(data['longitude'].toString()),
               ),
               infoWindow: InfoWindow(
@@ -129,8 +128,9 @@ class FeedController extends GetxController {
             ),
           );
         }
+
+        print("lat $latitude, long $longitude");
       }
-      print("lat $latitude, long $longitude");
     } catch (e) {
       print("error : $e");
     }
