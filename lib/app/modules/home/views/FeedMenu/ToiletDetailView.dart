@@ -12,7 +12,7 @@ class ToiletDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     // Retrieve the user’s name and marker location data from arguments
     final String userName = Get.arguments['name'] ?? 'User';
-    print(userName);
+    var id = Get.arguments['id'] ?? 0;
     final dynamic locationArg = Get.arguments['location'];
     final LatLng defaultLocation = LatLng(-6.992049, 110.417739);
 
@@ -26,7 +26,7 @@ class ToiletDetailView extends StatelessWidget {
       {"user": "Bob", "comment": "Great location and accessible."},
       {"user": "Charlie", "comment": "Needs more facilities nearby."},
     ];
-    feedController.getMarkbyUid();
+    feedController.getMarkbyUid(id);
     return Scaffold(
       backgroundColor: Color(0xFF181C14),
       appBar: AppBar(
@@ -59,7 +59,7 @@ class ToiletDetailView extends StatelessWidget {
               border: Border.all(color: Colors.white, width: 2),
             ),
             child: FutureBuilder<Set<Marker>>(
-                future: feedController.getMarkbyUid(),
+                future: feedController.getMarkbyUid(id),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
@@ -78,7 +78,8 @@ class ToiletDetailView extends StatelessWidget {
 
                   return GoogleMap(
                     initialCameraPosition: CameraPosition(
-                      target: location,
+                      target: LatLng(feedController.latitude.value,
+                          feedController.longitude.value),
                       zoom: 15,
                     ),
                     markers: snapshot.data ?? {},
@@ -132,7 +133,8 @@ class ToiletDetailView extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.camera_alt, color: Colors.white),
+                  icon: Icon(Icons.camera_alt,
+                      color: const Color.fromARGB(255, 41, 33, 33)),
                   onPressed: () {
                     // Action for camera or attachment
                   },

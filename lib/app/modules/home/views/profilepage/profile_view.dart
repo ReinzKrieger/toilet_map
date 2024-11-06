@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:toiletmap/app/modules/home/controllers/auth_controller.dart';
 import 'region_view.dart'; // Import RegionView untuk navigasi
 //import '../profilepage/ToiletMarkedView'; // Import ToiletMarkedView untuk navigasi
@@ -11,6 +12,8 @@ import 'package:toiletmap/app/modules/home/views/FeedMenu/add_friends_view.dart'
 
 class ProfileView extends StatelessWidget {
   final authUser = Get.find<AuthController>();
+  String formattedDate = DateFormat('dd/mm/yyyy').format(DateTime.now());
+  // String formatDate
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +53,6 @@ class ProfileView extends StatelessWidget {
               // Profile picture and name section
               Obx(() {
                 final userData = authUser.userData;
-                print("User Data: $userData");
                 return Row(
                   children: [
                     CircleAvatar(
@@ -72,7 +74,7 @@ class ProfileView extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          'Member Since: ${userData['email'] ?? 'N/A'}',
+                          'Member Since: $formattedDate',
                           style: TextStyle(color: Colors.grey),
                         ),
                       ],
@@ -179,6 +181,90 @@ class ProfileView extends StatelessWidget {
               ),
               // Additional UI sections (Following, Followers, Settings)
               // Remaining code unchanged
+              SizedBox(height: 16),
+              // Box untuk Following dan Followers yang ukurannya sama dengan Toilets Marked
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Box untuk Following dengan navigasi ke FollowingView
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.to(() => FollowingView());
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.pink),
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(Icons.group, color: Colors.pink),
+                            SizedBox(height: 8),
+                            Text(
+                              '6',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 36,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              'Following',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  // Box untuk Followers dengan navigasi ke FollowersView
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.to(() => FollowersView());
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.green),
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(Icons.people, color: Colors.green),
+                            SizedBox(height: 8),
+                            Text(
+                              '3',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 36,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              'Followers',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16),
+              // Settings
+              ListTile(
+                leading: Icon(Icons.settings, color: Colors.white),
+                title: Text('Settings', style: TextStyle(color: Colors.white)),
+                trailing: Icon(Icons.chevron_right, color: Colors.white),
+                onTap: () {
+                  Get.snackbar('Settings', 'Navigating to Settings');
+                },
+              ),
             ],
           ),
         ),

@@ -17,6 +17,8 @@ class FeedController extends GetxController {
   RxList<UserWithMarkers> userWithMarkersList = <UserWithMarkers>[].obs;
   FirebaseAuth auth = FirebaseAuth.instance;
   Set<Marker> markers = {};
+  var latitude = 0.0.obs;
+  var longitude = 0.0.obs;
   @override
   void onInit() {
     super.onInit();
@@ -100,8 +102,8 @@ class FeedController extends GetxController {
     }
   }
 
-  Future<Set<Marker>> getMarkbyUid() async {
-    String uid = auth.currentUser!.uid;
+  Future<Set<Marker>> getMarkbyUid(String id) async {
+    String uid = id;
 
     try {
       var markData = await firebaseFirestore
@@ -111,6 +113,8 @@ class FeedController extends GetxController {
 
       for (var docs in markData.docs) {
         var data = docs.data();
+        latitude.value = data['latitude'];
+        longitude.value = data['longitude'];
         if (data['latitude'] != null && data['longitude'] != null) {
           markers.add(
             Marker(
@@ -126,6 +130,7 @@ class FeedController extends GetxController {
           );
         }
       }
+      print("lat $latitude, long $longitude");
     } catch (e) {
       print("error : $e");
     }

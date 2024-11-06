@@ -28,7 +28,8 @@ class MapView extends StatelessWidget {
             print("Markers list in MapView: ${mapController.mapMarkers}");
             return GoogleMap(
               initialCameraPosition: CameraPosition(
-                target: LatLng(-6.9909713160452505, 110.41492883116007),
+                target: LatLng(mapController.mapMarkers[0].latitude,
+                    mapController.mapMarkers[0].longitude),
                 zoom: 15,
               ),
               markers: mapController.mapMarkers.map((marker) {

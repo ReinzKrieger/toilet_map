@@ -45,6 +45,14 @@ class ProfileController extends GetxController {
   }
 
   @override
+  void onReady() {
+    super.onReady();
+    if (auth.currentUser != null) {
+      fetchUserData();
+    }
+  }
+
+  @override
   void onClose() {
     // Dispose of the text controllers when the controller is destroyed
     nameTextController.dispose();

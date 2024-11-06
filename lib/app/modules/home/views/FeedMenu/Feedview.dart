@@ -1,6 +1,7 @@
 // lib/views/feed_view.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:toiletmap/app/modules/home/controllers/feed_controller.dart';
 import 'package:toiletmap/app/modules/home/views/FeedMenu/ToiletDetailView.dart';
@@ -50,7 +51,8 @@ class FeedView extends StatelessWidget {
                             onTap: () {
                               // Navigate to ToiletDetailView with user name as argument
                               Get.to(() => ToiletDetailView(), arguments: {
-                                'name': userWithMarkers.user.email,
+                                'name': userWithMarkers.user.name,
+                                'id': userWithMarkers.user.id
                               });
                             },
                             leading: CircleAvatar(
@@ -61,31 +63,44 @@ class FeedView extends StatelessWidget {
                                 style: TextStyle(color: Colors.white)),
                             subtitle: Row(
                               children: [
-                                Icon(Icons.star,
-                                    color: Colors.yellow, size: 16),
-                                Icon(Icons.star,
-                                    color: Colors.yellow, size: 16),
-                                Icon(Icons.star,
-                                    color: Colors.yellow, size: 16),
+                                // Icon(Icons.star,
+                                //     color: Colors.yellow, size: 16),
+                                // Icon(Icons.star,
+                                //     color: Colors.yellow, size: 16),
+                                // Icon(Icons.star,
+                                //     color: Colors.yellow, size: 16),
+                                RatingBar.builder(
+                                  initialRating:
+                                      userWithMarkers.markers[index].rating,
+                                  minRating: 1,
+                                  direction: Axis.horizontal,
+                                  allowHalfRating: true,
+                                  itemCount: 5,
+                                  itemSize: 20,
+                                  itemBuilder: (context, _) =>
+                                      Icon(Icons.star, color: Colors.yellow),
+                                  onRatingUpdate: (rating) {},
+                                  ignoreGestures: true,
+                                ),
                               ],
                             ),
                           ),
-                          // Display markers for each user below their profile
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: userWithMarkers.markers.map((marker) {
-                              return ListTile(
-                                leading: Icon(Icons.location_on,
-                                    color: Colors.yellow),
-                                title: Text(marker.title,
-                                    style: TextStyle(color: Colors.white)),
-                                subtitle: Text(
-                                  '${marker.latitude}, ${marker.longitude}',
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                              );
-                            }).toList(),
-                          ),
+                          // // Display markers for each user below their profile
+                          // Column(
+                          //   crossAxisAlignment: CrossAxisAlignment.start,
+                          //   children: userWithMarkers.markers.map((marker) {
+                          //     return ListTile(
+                          //       leading: Icon(Icons.location_on,
+                          //           color: Colors.yellow),
+                          //       title: Text(marker.title,
+                          //           style: TextStyle(color: Colors.white)),
+                          //       subtitle: Text(
+                          //         '${marker.latitude}, ${marker.longitude}',
+                          //         style: TextStyle(color: Colors.grey),
+                          //       ),
+                          //     );
+                          //   }).toList(),
+                          // ),
                         ],
                       ),
                     ),
