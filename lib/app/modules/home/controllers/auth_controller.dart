@@ -10,6 +10,7 @@ class AuthController extends GetxController {
 
   // Reactive map to store user profile data
   var userData = {}.obs;
+  Rx<DateTime?> creationTime = Rx<DateTime?>(DateTime.now());
 
   // Handle Firebase User
   Stream<User?> get user => auth.authStateChanges();
@@ -94,6 +95,7 @@ class AuthController extends GetxController {
       if (userDoc.exists) {
         print("User document data: ${userDoc.data()}"); // Debug document data
         userData.value = userDoc.data() as Map<String, dynamic>;
+        creationTime.value = auth.currentUser?.metadata.creationTime!;
       } else {
         print("No user document found for UID: $uid");
         Get.snackbar('Error', 'No user data found');

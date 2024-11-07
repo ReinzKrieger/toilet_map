@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:toiletmap/app/modules/home/models/user_model.dart';
 
 class ProfileEditController extends GetxController {
@@ -16,6 +17,7 @@ class ProfileEditController extends GetxController {
   var userData = Rxn<UserList>();
 
   final ImagePicker picker = ImagePicker();
+  var isLoading = false.obs;
 
   @override
   void onInit() {
@@ -27,7 +29,9 @@ class ProfileEditController extends GetxController {
   void pickImageFromGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
+      File file = File(pickedFile.path);
       profilePhoto.value = pickedFile.path;
+      await saveImage(file);
     }
   }
 
@@ -35,7 +39,9 @@ class ProfileEditController extends GetxController {
   void pickImageFromCamera() async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
+      File file = File(pickedFile.path);
       profilePhoto.value = pickedFile.path;
+      await saveImage(file);
     }
   }
 
@@ -60,6 +66,26 @@ class ProfileEditController extends GetxController {
     } catch (e) {
       print("Error fetching user data: $e");
       Get.snackbar('Error', 'Failed to fetch user data');
+    }
+  }
+
+  Future<void> saveImage(File file) async {
+    try {
+      isLoading.value = true;
+
+      Directory appDir = await getApplicationDocumentsDirectory();
+      String localPath =
+          "${appDir.path}/${DateTime.now().millisecondsSinceEpoch}.png";
+
+      File localFile = await file.copy(localPath);
+      profilePhoto.value = localFile.path;
+
+      Get.snackbar("Success", "Image Saved Locall");
+    } catch (e) {
+      isLoading.value = false;
+      Get.snackbar("Error", "Error : $e");
+    } finally {
+      isLoading.value = false;
     }
   }
 

@@ -12,11 +12,13 @@ import 'package:toiletmap/app/modules/home/views/FeedMenu/add_friends_view.dart'
 
 class ProfileView extends StatelessWidget {
   final authUser = Get.find<AuthController>();
-  String formattedDate = DateFormat('dd/mm/yyyy').format(DateTime.now());
+
   // String formatDate
 
   @override
   Widget build(BuildContext context) {
+    String formattedDate =
+        DateFormat('dd/MM/yyyy').format(authUser.creationTime.value!);
     return Scaffold(
       backgroundColor: Color(0xFF181C14),
       appBar: AppBar(
